@@ -1,0 +1,363 @@
+<!DOCTYPE html -->
+    <html>
+        <head>
+            <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+            <script src="js/jquery.min.js"></script>
+            <script src="js/jquery.mobile-1.4.5.min.js"></script>
+            <style type="text/css">
+                p{
+                    text-align: center;
+                
+                }
+ 
+            </style>
+            <script type="text/javascript">
+               
+                $(document).ready(function inicio(){
+                    
+    
+   var btnConsulta=$("#menu");//consultar todos los registros
+  btnConsulta.click(function cons(){  
+    $.ajax({
+    type:"POST",
+    url:"http://sistemas7.260mb.net/consultaBD.php",
+    data:"",
+    success: consultaDatos
+    });
+    
+    function consultaDatos(datos){
+    var respDatos=$.parseJSON(datos);   
+    var respuesta=$("#resconsulta");
+    dibujarTabla(respuesta, respDatos);    
+    }
+  });
+    function dibujarTabla(respuesta, respDatos) {
+    respuesta.html("");
+    respuesta.append('<table id="tab" border="1">');
+    var tabla=$("#tab");
+    tabla.html("<tr><th>Id_Combo</th><th>Nombre Combo</th><th>Descripcion</th><th>Precio</th></tr>");
+    for(var i in respDatos){
+      tabla.append("<tr><td>"+respDatos[i].Id_Combo+"</td>"
+      +"<td>"+respDatos[i].Nombre_Combo+"</td>"
+      +"<td>"+respDatos[i].Descripcion+"</td>"
+      +"<td>"+respDatos[i].Precio+"</td></tr>");
+    }
+    tabla.append("</table>");
+    }
+    /*
+    var pedC=$("#pedido");
+    pedC.click(function cargarD(){
+       
+            var Id=parseInt($("#pedidoD1").val());
+            
+            $.ajax({
+                type:"POST",
+                url:"consultaBD2.php",
+                data:"Id="+Id,
+                success: cargarDatosP
+            });
+            function cargarDatosP(datos){
+                alert("listo" + datos)
+                var consDatAct3=$.parseJSON(datos);
+                var respCargDatos3=$("#Cpedido");//Div del resultado para dibujar controles
+                if(consDatAct3!=0){ 
+                    respCargDatos3.html("<label>ID Combo:</label><input type='text' id='Id' disabled='yes'>");
+                    respCargDatos3.append("<label>Nombre del Combo:</label><input type='text' id='nomCom'>");
+                    respCargDatos3.append("<label>Descripción:</label><input type='text' id='des'>");
+                    respCargDatos3.append("<label>ID Precio:</label><input type='text' id='prec'>");
+                    
+                    var Id=$("#Id");
+                    var nCom=$("#nomCom");
+                    var des=$("#des");
+                    var prec=$("#prec");
+                    
+                    for(var x in consDatAct3){
+                        Id.val(consDatAct3[x].Id_Combo);
+                        nCom.val(consDatAct3[x].Nombre_Combo);
+                        des.val(consDatAct3[x].Descripcion);
+                        prec.val(consDatAct3[x].Precio);
+                        
+                    }   
+                }else{
+                    respCargDatos3.html('<p>No existen registros</p>');
+                }
+            }
+        });
+        */
+     var btnConsAct=$("#btnConsAct");
+  btnConsAct.click(function cargarDat(){  
+    $.ajax({
+    type:"POST",
+    url:"http://sistemas7.260mb.net/consultaBD.php",
+    data:"",
+    success: cargarDatos
+    });
+    
+    function cargarDatos(datos){   
+      var respCarga=$.parseJSON(datos);       
+      var respConAct=$("#respConAct");      
+      dibujarTabla(respConAct,respCarga);
+    }
+  });
+  
+  var btnCarDatos=$("#btnCarDatos");
+  btnCarDatos.click(function cargarInf(){
+  var Id=parseInt($("#nomActualizar").val());
+    $.ajax({
+    type:"POST",
+    url:"http://sistemas7.260mb.net/consultaBD2.php",
+    data:"Id="+Id,
+    success: cargarDatosAct
+    });
+    
+    function cargarDatosAct(datos){
+      var consDatAct=$.parseJSON(datos);
+      var respCargDatos=$("#respCargDatos");//Div del resultado para dibujar controles
+       if(consDatAct!=0){ 
+      respCargDatos.html("<label>ID:</label><input type='text' id='Id' disabled='yes'>");
+      respCargDatos.append("<label>Nombre Combo:</label><input type='text' id='nom' disabled='yes'>");
+      respCargDatos.append("<label>Descripcion:</label><textarea id='ed'></textarea>");
+      respCargDatos.append("<label>Precio:</label><input type='text' id='pre' disabled='yes'> ");
+      var Id=$("#Id");
+      var nom=$("#nom");
+      var ed=$("#ed");
+      var pre=$("#pre");
+      for(var i in consDatAct){
+	Id.val(consDatAct[i].Id_Combo);
+	nom.val(consDatAct[i].Nombre_Combo);
+	ed.val(consDatAct[i].Descripcion);
+	pre.val(consDatAct[i].Precio);
+       }   
+  }else{
+  respCargDatos.html('<p>No existen registros</p>');
+  }
+    }
+   });
+  
+   var btnGuarDatos=$("#btnGuarDatos");
+      btnGuarDatos.click(function actual(){
+      var id=parseInt($("#Id").val());
+      var nombre=$("#nom").val();
+      var descripcion=$("#ed").val();
+      var precio=$("#pre").val();
+
+      if(nombre=="" || descripcion=="" || precio=="" ){
+	alert("Ingresa información en todos los campos");
+      }else{
+	$.ajax({
+	  type:"POST",
+	  url:"http://sistemas7.260mb.net/guardarDatos.php",
+	  data:"id="+id+"&precio="+precio,
+	  success: actualizacion
+	});
+		
+      }   
+      function actualizacion(datos){
+	  alert(datos);
+	}
+   });
+    
+    
+    var btnGuardar=$("#gComentario");
+  btnGuardar.click(function guardar(){
+  var com=$("#comentario").val();
+    $.ajax({
+    type:"POST",
+    url:"http://sistemas7.260mb.net/Comentarios.php",
+    data:"comentario="+com,
+    success: registro
+    });
+    
+    function registro(datos){
+    alert(datos);
+    }
+  });
+  
+ 
+    
+});
+                
+                
+                
+                
+                
+                
+                
+                
+              
+            </script>
+        </head>
+        <body>
+            <div data-role="page" id="Principal" >
+                <div data-role="header">
+                    <H1>RESTAURANTE EL RANCHERO</H1>
+                </div>
+                <div data-role="content">
+                    <p>Lista de opciones</p>
+
+                    <a href="#Pagina2" data-role="button" data-transition="slide">Misión</a>
+                    <a href="#Pagina3" data-role="button" data-transition="slide">Visión</a>
+                    <a href="#Pagina4" data-role="button" data-transition="slide">Slogan</a>
+                    <a href="#Pagina5" data-role="button" data-transition="slide">Opciones</a>
+                   
+                </div>
+                <div data-role="footer">
+                    <p>"EL RANCHERO"</p>
+                </div>
+            </div>
+            <div data-role="page" id="Pagina2">
+                <div data-role="header">
+                    <a href="#Principal" data-role="button" data-transition="flip" data-add-back-btnRegresar
+                    data-add-back-btn="true" data-icon="home">Regresar</a>
+                    
+                    <p>MISIÓN</p>
+                </div>
+                <div data-role="content">
+                    <p>Ofrecer a nuestros clientes alimentos de calidad</p>
+                    <p>los cuales satisfagan las necesidades del cliente</p>
+                    <p>en un ambiente agradable, tambien nos coprometenemos</p>
+                    <p>a brindar un excelente servicio, generando el desarrollo</p>
+                    <p>económico en nuestro país</p>
+                </div>
+                <div data-role="footer">
+                   <p>**El RANCHERO**</p>
+                </div>
+
+            </div>
+            
+            <div data-role="page" id="Pagina3">
+                <div data-role="header">
+                    <a href="#Principal" data-role="button" data-transition="flip" data-add-back-btnRegresar
+                    data-add-back-btn="true" data-icon="home">Regresar</a>
+                    
+                    <p>Visión</p>
+                </div>
+                <div data-role="content">
+                    <p>Ser reconocido como el mejor restaurante de confiable</p>
+                    <p>y de prestigio </p>
+                </div>
+                <div data-role="footer">
+                     <p>**El RANCHERO**</p>
+                </div>
+            </div>
+            
+            <div data-role="page" id="Pagina4">
+                <div data-role="header">
+                    <a href="#Principal" data-role="button" data-transition="flip" data-add-back-btnRegresar
+                    data-add-back-btn="true" data-icon="home">Regresar</a>
+                    
+                    <p>Slogan</p>
+                </div>
+                <div data-role="content">
+                    <p><font size="5">"La deliciosa comida que solo tu cuerpo merece"</font></p>
+                    
+                    <center> 
+                    <img src="images/ranchero2.jpg" >
+                    </center>
+                    
+                </div>
+                <div data-role="footer">
+                     <p>**El RANCHERO**</p>
+                </div>
+            </div>
+
+            <div data-role="page" id="Pagina5">
+                <div data-role="header">
+                    <a href="#Principal" data-role="button" data-transition="flip" data-add-back-btnRegresar
+                    data-add-back-btn="true" data-icon="home">Regresar</a>
+                    
+                    <p>Slogan</p>
+                </div>
+                <div data-role="content">
+                    <a href="#menu" data-role="button" data-transition="slide">Menú</a>
+                    <a href="#pedido" data-role="button" data-transition="slide">Pedido</a>
+                    <a href="#comentarios" data-role="button" data-transition="slide">Comentarios</a>
+                    <!--a href="#salir" data-role="button" data-transition="slide">Salir</a-->
+                   
+                </div>
+                <div data-role="footer">
+                     <p>**El RANCHERO**</p>
+                </div>
+            </div>
+            
+            <div data-role="page" id="menu">
+                <div data-role="header">
+                    <a href="#Pagina5" data-role="button" data-transition="flip" data-add-back-btnRegresar
+                    data-add-back-btn="true" data-icon="home">Regresar</a>
+                    <p>Menú</p>
+                </div>
+                <div data-role="content">
+                    <a href="#menu" data-role="button" data-transition="slide" id="menu">Mostrar menú</a>
+                    <div id="resconsulta"></div>
+                     </div>
+
+                   
+                </div>
+                <div data-role="footer">
+                     <p>**El RANCHERO**</p>
+                </div>
+            </div>
+
+                
+                         
+           <!--div data-role="page" id="pedido">
+                <div data-role="header">
+                    <a href="#Pagina5" data-role="button" data-transition="flip" data-add-back-btnRegresar
+                    data-add-back-btn="true" data-icon="home">Regresar</a>
+                    
+                    <p>¿Cual es su pedido?</p>
+                </div>
+                <div data-role="content">
+                    <p>AQUI VAN LOS CHEK LIST</p>
+                    <label>Ingresa el id del combo</label>
+                    <input type="text" id="pedidoD1">
+                   <a href="#" data-role="button" data-transition="slide" id="pedido">Consultar Pedido</a>
+                   <div id="Cpedido"></div>
+                   <a href="#" data-role="button" data-transition="slide" id="confPedido">Confirmar Pedido</a>
+
+                   
+                </div>
+                <div data-role="footer">
+                     <p>**El RANCHERO**</p>
+                </div>
+            </div-->
+            <div data-role="page" id="pedido">
+  <div data-role="header" >
+    <p>Actualizar registros</p>
+    <a href="#Pagina5" data-role="button" data-transition="flip" data-add-back-btnRegresar
+                    data-add-back-btn="true" data-icon="home">Regresar</a>
+  </div>
+  <div data-role="content">
+    <input type="button" id="btnConsAct" value="Mostrar todos los registros">
+    <div id="respConAct"></div>
+    <label for="nomActualizar">Id Combo</label>
+    <input type="text" id="nomActualizar" >
+    <input type="button" id="btnCarDatos" value="Cargar Datos">
+    <div id="respCargDatos"></div>
+    <input type="button" id="btnGuarDatos" value="Enviar Pedido">
+  </div>
+  <div data-role="footer">
+  <p>Derechos reservados</p>
+  </div>
+</div>
+           
+                      <div data-role="page" id="comentarios">
+                <div data-role="header">
+                    <a href="#Pagina5" data-role="button" data-transition="flip" data-add-back-btnRegresar
+                    data-add-back-btn="true" data-icon="home">Regresar</a>
+                    
+                    <p>Comentarios</p>
+                </div>
+                <div data-role="content">
+                    <p style="text-align: left">Aqui puedes dar tu punto de vista</p>
+                    <label for="comentario">Sugerencias o Comentarios:</label>
+                             <input type="text" id="comentario">
+                      <input type="button" id="gComentario" value="Guardar Comentario">
+                   
+                </div>
+                <div data-role="footer">
+                     <p>**El RANCHERO**</p>
+                </div>
+            </div> 
+        </body>
+    </html>
